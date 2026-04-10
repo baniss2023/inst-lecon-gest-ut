@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestion des utilisateurs et des groupes sous Linux</title>
+<link href="assets/style.css" rel="stylesheet"/>
+<link href="assets/print.css" media="print" rel="stylesheet"/>
+</head>
+<body class="theme-powershell" id="top">
+<a aria-label="Retour en haut" class="back-to-top" href="#top">↑</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <section aria-label="Informations principales de la leçon" class="page-identity-strip page-identity-strip-topbar">
+      <article class="identity-card identity-card-person">
+        <div class="identity-media">
+          <img alt="Anis Ghaieb" src="img/anis.png"/>
+        </div>
+        <div class="identity-copy">
+          <strong>Anis Ghaieb</strong>
+          <span>baniss2002@gmail.com</span>
+        </div>
+      </article>
+
+      <article class="identity-card identity-card-course">
+        <div class="identity-copy">
+          <strong>Administration Linux — utilisateurs et groupes</strong>
+        </div>
+      </article>
+
+      <article class="identity-card identity-card-college">
+        <div aria-label="Collège Universel" class="identity-media identity-media-logo">
+          <img alt="Logo du Collège Universel" src="img/college.png"/>
+        </div>
+        <div class="identity-copy">
+          <strong>Collège Universel</strong>
+          <span>Campus Montréal</span>
+        </div>
+      </article>
+    </section>
+  </div>
+</header>
+
+<main class="document document-powershell">
+  <header class="document-header document-header-hybrid">
+    <section aria-label="Présentation de la leçon" class="hero-wrap hero-wrap-powershell hero-wrap-overlay">
+      <div class="hero-image-box hero-image-box-overlay hero-image-box-triple">
+        <div class="hero-split-banner" aria-label="Visuel principal de la leçon">
+          <figure class="hero-split-item hero-split-side hero-split-left">
+            <img alt="Icônes technologiques complémentaires à gauche" src="img/icones2.png"/>
+          </figure>
+          <figure class="hero-split-item hero-split-center">
+            <img alt="Bannière centrale de la leçon sur les utilisateurs et les groupes sous Linux" id="heroImage" src="img/bann-milieu.png"/>
+          </figure>
+          <figure class="hero-split-item hero-split-side hero-split-right">
+            <img alt="Icônes technologiques complémentaires à droite" src="img/icones1.png"/>
+          </figure>
+        </div>
+      </div>
+      <section class="hero-title-panel">
+        <h1 class="lesson-title-hybrid hero-title-overlay">Gestion des utilisateurs et des groupes sous Linux</h1>
+      </section>
+      <section class="lesson-intro-box lesson-intro-box-fullwidth">
+        <p class="lesson-subtitle-hybrid">Sous Linux, la gestion des utilisateurs et des groupes fait partie des bases de l’administration système. Cette notion permet de contrôler qui peut faire quoi sur l’ordinateur, d’organiser les comptes selon leur rôle et de protéger plus efficacement les fichiers ainsi que les ressources du système.</p>
+      </section>
+    </section>
+
+    <section aria-label="Vue d’ensemble de la leçon" class="document-overview" id="sommaire">
+      <div class="overview-panel">
+        <h2 class="overview-title">Table des matières</h2>
+        <nav aria-label="Table des matières de la leçon" class="toc-nav">
+          <ul class="toc-list">
+            <li class="toc-item toc-level-1"><a class="toc-link" href="#partie-1">Comprendre les notions d’utilisateur et de groupe</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-2">Pourquoi utiliser des utilisateurs et des groupes</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-3">Gestion graphique et ligne de commande</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-4">Le super utilisateur, root et sudo</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-5">Ajouter et supprimer un utilisateur</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-6">Créer, supprimer et gérer les groupes</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-7">Vérifier les groupes et les utilisateurs</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-8">Extraire des informations depuis /etc/passwd</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-9">Exemple complet avec permissions sur un fichier</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-10">Conseils utiles et erreurs fréquentes</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#partie-11">À retenir, questions et petit exercice</a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#qcm-final">QCM final de validation</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="overview-panel">
+        <h2 class="overview-title">Objectifs de la leçon</h2>
+        <ul class="goal-list">
+          <li>Expliquer à quoi servent les utilisateurs et les groupes sous Linux.</li><li>Distinguer un utilisateur ordinaire d’un super utilisateur.</li><li>Ajouter et supprimer un utilisateur en ligne de commande.</li><li>Créer et supprimer un groupe, puis gérer les appartenances.</li><li>Vérifier les groupes d’un utilisateur et afficher les groupes du système.</li><li>Comprendre la commande <strong>cut -d: -f1 /etc/passwd</strong>.</li><li>Lire un scénario simple de permissions sur un fichier Linux.</li><li>Adopter de bons réflexes de prudence avec <strong>sudo</strong> et les suppressions.</li>
+        </ul>
+      </div>
+    </section>
+  </header>
+
+  
+<section class="part" id="partie-1">
+  <div class="part-header"><h2 class="part-title">Comprendre les notions d’utilisateur et de groupe</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Pourquoi cette notion est importante</h3>
+      <div class="section-body">
+        <p>Sous Linux, la gestion des utilisateurs et des groupes fait partie des bases de l’administration système. Elle permet de contrôler qui peut se connecter, quels fichiers une personne peut utiliser et quelles actions elle peut exécuter.</p>
+        <p>Dans un ordinateur partagé, tout le monde ne doit pas avoir les mêmes droits. Un élève, un enseignant et un administrateur n’ont pas les mêmes besoins. C’est pour cette raison que Linux s’appuie fortement sur les comptes, les groupes et les permissions.</p>
+        <div class="callout spaced-block lesson-callout"><strong>Idée clé :</strong> un compte identifie une personne, alors qu’un groupe sert surtout à organiser plusieurs comptes qui partagent un même rôle.</div>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Définir simplement un utilisateur et un groupe</h3>
+      <div class="section-body">
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Notion</th><th>Définition simple</th><th>Exemple</th></tr></thead><tbody><tr><td>Utilisateur</td><td>Compte individuel qui permet à une personne de se connecter et de travailler sur le système.</td><td><strong>eleve1</strong>, <strong>prof1</strong>, <strong>root</strong></td></tr><tr><td>Groupe</td><td>Ensemble d’utilisateurs réunis sous un même nom pour simplifier la gestion des droits.</td><td><strong>eleves</strong>, <strong>profs</strong>, <strong>administrateurs</strong></td></tr><tr><td>Répertoire personnel</td><td>Dossier propre à l’utilisateur, souvent situé dans <strong>/home/nom_utilisateur</strong>.</td><td><strong>/home/prof1</strong></td></tr></tbody></table></div>
+        <p>Dans une école, on peut imaginer un groupe <strong>eleves</strong>, un groupe <strong>profs</strong> et un groupe <strong>administrateurs</strong>. Cette organisation évite de configurer chaque personne une par une lorsque plusieurs utilisateurs doivent partager les mêmes autorisations.</p>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Le rôle de l’identifiant unique</h3>
+      <div class="section-body">
+        <p>Chaque utilisateur possède un identifiant unique appelé <strong>UID</strong> pour <em>User ID</em>. Même si deux personnes ont des tâches proches, Linux les distingue toujours grâce à leur compte et à cet identifiant.</p>
+        <div class="callout spaced-block final-callout"><strong>À retenir :</strong> Linux ne raisonne pas seulement en noms visibles. Il s’appuie aussi sur des identifiants internes pour reconnaître précisément chaque compte.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-2">
+  <div class="part-header"><h2 class="part-title">Pourquoi utiliser des utilisateurs et des groupes</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Les principaux avantages</h3>
+      <div class="section-body">
+        <p>Créer plusieurs utilisateurs et plusieurs groupes facilite la gestion du système. Cette organisation rend Linux plus sûr, plus clair et plus simple à administrer lorsque le nombre de comptes augmente.</p>
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Aspect</th><th>Ce que cela apporte concrètement</th></tr></thead><tbody><tr><td>Sécurité</td><td>Un compte ordinaire ne peut pas tout modifier. Cela limite les erreurs et les actions dangereuses.</td></tr><tr><td>Gestion des autorisations</td><td>On peut attribuer des droits à un groupe entier au lieu de traiter chaque personne séparément.</td></tr><tr><td>Organisation</td><td>Les utilisateurs sont classés selon leur rôle : élèves, enseignants, administrateurs, stagiaires, etc.</td></tr><tr><td>Isolation</td><td>Certains fichiers sensibles peuvent être réservés à un groupe précis.</td></tr><tr><td>Migration</td><td>Une organisation propre des comptes est plus facile à reproduire sur une autre machine.</td></tr></tbody></table></div>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Exemple simple de logique de droits</h3>
+      <div class="section-body">
+        <p>Si tous les enseignants appartiennent au groupe <strong>profs</strong>, il suffit de donner un droit de lecture à ce groupe pour qu’ils puissent tous consulter un dossier commun. Sans groupe, il faudrait gérer chaque enseignant séparément.</p>
+        <div class="callout spaced-block warning-callout"><strong>Remarque importante :</strong> plus les droits sont contrôlés, plus le système est protégé. Donner trop de droits rend rapidement le système moins sûr.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-3">
+  <div class="part-header"><h2 class="part-title">Gestion graphique et ligne de commande</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Deux approches possibles</h3>
+      <div class="section-body">
+        <p>Linux permet de gérer les utilisateurs et les groupes de deux façons principales : par une interface graphique ou par la ligne de commande. Les deux approches poursuivent le même objectif, mais elles ne montrent pas le système avec le même niveau de détail.</p>
+        <div class="duo-grid">
+          <section class="syntax-card"><h4>Gestion graphique</h4><pre data-help-title="Vue graphique des comptes" data-help-role="Ce bloc résume ce qu’on remplit généralement dans un outil graphique de gestion des utilisateurs sous Linux.">Section Utilisateurs dans les paramètres du système
+→ Ajouter un utilisateur
+→ Choisir le type de compte
+→ Saisir le nom complet
+→ Choisir le nom d’utilisateur
+→ Définir le mot de passe</pre></section>
+          <section class="syntax-card"><h4>Ligne de commande</h4><pre data-help-title="Commandes principales" data-help-role="Ce bloc regroupe les commandes de base utilisées en ligne de commande pour créer, supprimer et organiser des comptes Linux.">sudo adduser nom_utilisateur
+sudo deluser --remove-home nom_utilisateur
+sudo addgroup nom_groupe
+sudo usermod -aG nom_groupe nom_utilisateur</pre></section>
+        </div>
+        <p>La gestion graphique est rassurante pour débuter, car elle est visuelle. En revanche, la ligne de commande est plus rapide, plus précise et plus adaptée à l’administration réelle ainsi qu’à l’automatisation.</p>
+        <div class="callout spaced-block lesson-callout"><strong>Conseil pédagogique :</strong> même si l’interface graphique aide à débuter, il est important d’apprendre aussi les commandes pour comprendre ce qui se passe réellement dans le système.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-4">
+  <div class="part-header"><h2 class="part-title">Le super utilisateur, root et sudo</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Qui est root ?</h3>
+      <div class="section-body">
+        <p>Le super utilisateur est le compte qui possède les privilèges les plus élevés sur le système. Sous Linux, ce compte s’appelle généralement <strong>root</strong>. Il peut créer ou supprimer des utilisateurs, modifier les permissions, installer des composants et changer des paramètres critiques.</p>
+        <div class="callout spaced-block warning-callout"><strong>Pourquoi faut-il faire attention ?</strong> avec de tels privilèges, une mauvaise commande peut provoquer des dégâts importants. Les actions d’administration doivent donc être exécutées avec prudence.</div>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Accéder temporairement à des privilèges élevés</h3>
+      <div class="section-body">
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">acces-administration.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — privilèges élevés</div><div class="code-content"><div class="line" data-help-title="Accès au compte root" data-help-role="Cette commande demande des privilèges administrateur puis ouvre une session plus élevée. Elle doit être utilisée avec prudence car les commandes suivantes auront un impact important sur le système."><span class="line-no">1</span><span class="line-text">sudo su</span></div></div></div></section>
+        <p>Dans la pratique, la commande <strong>sudo</strong> est souvent préférable à une connexion permanente en root, car elle permet d’exécuter seulement la commande nécessaire avec des privilèges d’administration.</p>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Comprendre les symboles $ et #</h3>
+      <div class="section-body">
+        <p>Dans le terminal Linux, le symbole affiché dans l’invite de commande donne souvent une indication sur le niveau de privilège.</p>
+        <div class="resultblock"><div class="pcframe"><div class="pcinner"><pre class="resultpre">$ groups john
+# adduser stage1</pre></div></div></div>
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Symbole</th><th>Ce qu’il signifie en général</th></tr></thead><tbody><tr><td><strong>$</strong></td><td>Utilisateur ordinaire avec des droits limités.</td></tr><tr><td><strong>#</strong></td><td>Super utilisateur ou session avec des droits d’administration plus élevés.</td></tr></tbody></table></div>
+        <p>Quand tu vois <strong>$</strong>, tu travailles en général avec un compte ordinaire. Quand tu vois <strong>#</strong>, il faut être encore plus prudent, car la commande peut agir sur tout le système.</p>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-5">
+  <div class="part-header"><h2 class="part-title">Ajouter et supprimer un utilisateur</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Créer un nouvel utilisateur</h3>
+      <div class="section-body">
+        <p>Pour ajouter un utilisateur, on utilise la commande <strong>adduser</strong> suivie du nom du compte à créer.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">utilisateurs.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — création d’un compte</div><div class="code-content"><div class="line" data-help-title="Création de l’utilisateur john" data-help-role="Cette commande crée un nouveau compte nommé john. Selon la configuration du système, Linux peut ensuite demander un mot de passe et d’autres informations complémentaires."><span class="line-no">1</span><span class="line-text">sudo adduser john</span></div></div></div></section>
+        <p>Lors de la création, Linux peut demander un mot de passe, puis confirmer certaines informations liées au compte.</p>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Supprimer un utilisateur et son dossier personnel</h3>
+      <div class="section-body">
+        <p>Pour supprimer un utilisateur ainsi que son répertoire personnel, on utilise l’option <strong>--remove-home</strong>.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">utilisateurs.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — suppression d’un compte</div><div class="code-content"><div class="line" data-help-title="Suppression complète de john" data-help-role="Cette commande supprime le compte john et demande aussi la suppression de son répertoire personnel dans /home/john. Elle efface donc les fichiers personnels associés à cet utilisateur."><span class="line-no">1</span><span class="line-text">sudo deluser --remove-home john</span></div></div></div></section>
+        <p>Le répertoire personnel est souvent situé dans <strong>/home/nom_utilisateur</strong>. Supprimer le compte avec cette option efface aussi les fichiers stockés dans ce dossier.</p>
+        <div class="callout spaced-block warning-callout"><strong>Réflexe à adopter :</strong> avant de supprimer un utilisateur, vérifier si ses fichiers doivent être sauvegardés. Une suppression trop rapide peut entraîner une perte de données.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-6">
+  <div class="part-header"><h2 class="part-title">Créer, supprimer et gérer les groupes</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Créer et supprimer un groupe</h3>
+      <div class="section-body">
+        <p>Les groupes servent à rassembler plusieurs utilisateurs sous une même catégorie. On les crée avec <strong>addgroup</strong> et on les supprime avec <strong>delgroup</strong>.</p>
+        <div class="duo-grid">
+          <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">groupes.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — création d’un groupe</div><div class="code-content"><div class="line" data-help-title="Création du groupe profs" data-help-role="Cette commande crée un nouveau groupe nommé profs pour rassembler plusieurs utilisateurs ayant le même rôle."><span class="line-no">1</span><span class="line-text">sudo addgroup profs</span></div></div></div></section>
+          <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">groupes.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — suppression d’un groupe</div><div class="code-content"><div class="line" data-help-title="Suppression du groupe eleves" data-help-role="Cette commande retire le groupe eleves du système. Elle supprime le groupe lui-même, pas seulement l’appartenance d’un utilisateur."><span class="line-no">1</span><span class="line-text">sudo delgroup eleves</span></div></div></div></section>
+        </div>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Ajouter un utilisateur à un groupe</h3>
+      <div class="section-body">
+        <p>Pour ajouter un utilisateur à un groupe sans retirer ses autres appartenances, on utilise <strong>usermod -aG</strong>.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">groupes.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — appartenance à un groupe</div><div class="code-content"><div class="line" data-help-title="Ajout de Anta au groupe eleves" data-help-role="Cette commande ajoute l’utilisateur Anta au groupe eleves tout en conservant les autres groupes auxquels il appartient déjà."><span class="line-no">1</span><span class="line-text">sudo usermod -aG eleves Anta</span></div><div class="line" data-help-title="Option -a" data-help-role="L’option -a signifie append. Elle indique qu’on ajoute un groupe sans écraser les appartenances déjà présentes."><span class="line-no">2</span><span class="line-text">-a  = append</span></div><div class="line" data-help-title="Option -G" data-help-role="L’option -G sert à préciser le ou les groupes concernés par la modification."><span class="line-no">3</span><span class="line-text">-G  = groupes ciblés</span></div></div></div></section>
+        <div class="callout spaced-block warning-callout"><strong>Point très important :</strong> sans l’option <strong>-a</strong>, on risque de remplacer la liste des groupes de l’utilisateur au lieu d’ajouter simplement un nouveau groupe.</div>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Retirer un utilisateur d’un groupe</h3>
+      <div class="section-body">
+        <p>Retirer un utilisateur d’un groupe n’est pas la même chose que supprimer le groupe lui-même.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">groupes.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — retrait d’une appartenance</div><div class="code-content"><div class="line" data-help-title="Retrait de Anta du groupe eleves" data-help-role="Cette commande enlève Anta du groupe eleves, mais conserve le groupe eleves dans le système."><span class="line-no">1</span><span class="line-text">sudo gpasswd -d Anta eleves</span></div></div></div></section>
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Action</th><th>Ce qui disparaît</th></tr></thead><tbody><tr><td><strong>sudo delgroup eleves</strong></td><td>Le groupe <strong>eleves</strong> est supprimé du système.</td></tr><tr><td><strong>sudo gpasswd -d Anta eleves</strong></td><td>Seule l’appartenance de <strong>Anta</strong> à ce groupe est retirée.</td></tr></tbody></table></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-7">
+  <div class="part-header"><h2 class="part-title">Vérifier les groupes et les utilisateurs</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Afficher les groupes du système et les appartenances</h3>
+      <div class="section-body">
+        <p>Après une modification, il faut toujours vérifier le résultat. Linux propose plusieurs commandes simples pour contrôler les groupes et les appartenances.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">verification.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — commandes de vérification</div><div class="code-content"><div class="line" data-help-title="Afficher tous les groupes" data-help-role="Cette commande affiche les groupes connus du système. Elle permet de vérifier qu’un groupe a bien été créé."><span class="line-no">1</span><span class="line-text">getent group</span></div><div class="line" data-help-title="Afficher les groupes de john" data-help-role="Cette commande montre à quels groupes appartient l’utilisateur john."><span class="line-no">2</span><span class="line-text">groups john</span></div><div class="line" data-help-title="Afficher les informations du groupe eleves" data-help-role="Cette commande affiche le groupe eleves et permet notamment de voir les utilisateurs qui y sont associés."><span class="line-no">3</span><span class="line-text">getent group eleves</span></div></div></div></section>
+        <div class="resultblock"><div class="pcframe"><div class="pcinner"><pre class="resultpre">eleves:x:1002:eleve1,eleve2,eleve3
+profs:x:1003:prof1,prof2</pre></div></div></div>
+        <p>Savoir lire ces résultats est essentiel pour confirmer qu’une configuration a bien été appliquée.</p>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-8">
+  <div class="part-header"><h2 class="part-title">Extraire des informations depuis /etc/passwd</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Comprendre la commande cut -d: -f1 /etc/passwd</h3>
+      <div class="section-body">
+        <p>Linux stocke des informations sur les utilisateurs dans le fichier système <strong>/etc/passwd</strong>. Pour afficher uniquement le premier champ de chaque ligne, on peut utiliser la commande suivante :</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">passwd.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — extraction d’informations</div><div class="code-content"><div class="line" data-help-title="Extraction du premier champ" data-help-role="Cette commande lit le fichier /etc/passwd, utilise le caractère deux-points comme séparateur et affiche seulement le premier champ de chaque ligne, c’est-à-dire généralement le nom d’utilisateur."><span class="line-no">1</span><span class="line-text">cut -d: -f1 /etc/passwd</span></div></div></div></section>
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Élément</th><th>Explication</th></tr></thead><tbody><tr><td><strong>cut</strong></td><td>Commande qui sert à découper ou extraire une partie du contenu d’un fichier texte.</td></tr><tr><td><strong>-d:</strong></td><td>Le délimiteur choisi est le caractère <strong>:</strong>, car les champs de <strong>/etc/passwd</strong> sont séparés par des deux-points.</td></tr><tr><td><strong>-f1</strong></td><td>On demande le premier champ.</td></tr><tr><td><strong>/etc/passwd</strong></td><td>Fichier source qui contient des informations liées aux utilisateurs du système.</td></tr></tbody></table></div>
+        <div class="resultblock"><div class="pcframe"><div class="pcinner"><pre class="resultpre">root
+daemon
+bin
+sys
+john</pre></div></div></div>
+        <p>Si une ligne commence par <strong>john:x:1001:1001:John Doe:/home/john:/bin/bash</strong>, le premier champ affiché sera simplement <strong>john</strong>.</p>
+        <div class="callout spaced-block lesson-callout"><strong>Conseil pratique :</strong> cette commande est utile pour obtenir rapidement une liste propre des noms d’utilisateurs sans afficher tous les autres champs techniques.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-9">
+  <div class="part-header"><h2 class="part-title">Exemple complet avec permissions sur un fichier</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Créer les groupes et les utilisateurs</h3>
+      <div class="section-body">
+        <p>Dans cet exemple, on souhaite créer les groupes <strong>eleves</strong> et <strong>profs</strong>, puis les utilisateurs <strong>eleve1</strong>, <strong>eleve2</strong>, <strong>eleve3</strong>, <strong>prof1</strong> et <strong>prof2</strong>.</p>
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">scenario-complet.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — préparation des comptes</div><div class="code-content"><div class="line" data-help-title="Création du groupe eleves" data-help-role="Cette ligne crée le groupe eleves pour rassembler les comptes d’élèves."><span class="line-no">1</span><span class="line-text">sudo addgroup eleves</span></div><div class="line" data-help-title="Création du groupe profs" data-help-role="Cette ligne crée le groupe profs pour les comptes d’enseignants."><span class="line-no">2</span><span class="line-text">sudo addgroup profs</span></div><div class="line" data-help-title="Création de eleve1" data-help-role="Cette ligne crée le premier compte élève."><span class="line-no">3</span><span class="line-text">sudo adduser eleve1</span></div><div class="line" data-help-title="Création de eleve2" data-help-role="Cette ligne crée le deuxième compte élève."><span class="line-no">4</span><span class="line-text">sudo adduser eleve2</span></div><div class="line" data-help-title="Création de eleve3" data-help-role="Cette ligne crée le troisième compte élève."><span class="line-no">5</span><span class="line-text">sudo adduser eleve3</span></div><div class="line" data-help-title="Création de prof1" data-help-role="Cette ligne crée le premier compte professeur."><span class="line-no">6</span><span class="line-text">sudo adduser prof1</span></div><div class="line" data-help-title="Création de prof2" data-help-role="Cette ligne crée le deuxième compte professeur."><span class="line-no">7</span><span class="line-text">sudo adduser prof2</span></div></div></div></section>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Classer les utilisateurs dans les bons groupes</h3>
+      <div class="section-body">
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">scenario-complet.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — appartenance aux groupes</div><div class="code-content"><div class="line" data-help-title="Ajout de eleve1 au groupe eleves" data-help-role="Cette ligne place eleve1 dans le groupe eleves."><span class="line-no">1</span><span class="line-text">sudo usermod -aG eleves eleve1</span></div><div class="line" data-help-title="Ajout de eleve2 au groupe eleves" data-help-role="Cette ligne place eleve2 dans le groupe eleves."><span class="line-no">2</span><span class="line-text">sudo usermod -aG eleves eleve2</span></div><div class="line" data-help-title="Ajout de eleve3 au groupe eleves" data-help-role="Cette ligne place eleve3 dans le groupe eleves."><span class="line-no">3</span><span class="line-text">sudo usermod -aG eleves eleve3</span></div><div class="line" data-help-title="Ajout de prof1 au groupe profs" data-help-role="Cette ligne place prof1 dans le groupe profs."><span class="line-no">4</span><span class="line-text">sudo usermod -aG profs prof1</span></div><div class="line" data-help-title="Ajout de prof2 au groupe profs" data-help-role="Cette ligne place prof2 dans le groupe profs."><span class="line-no">5</span><span class="line-text">sudo usermod -aG profs prof2</span></div></div></div></section>
+        <p>À cette étape, les comptes sont organisés selon leur rôle. On peut alors attribuer des permissions plus facilement par groupe.</p>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Créer un fichier et définir ses permissions</h3>
+      <div class="section-body">
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">permissions.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — propriétaire et autorisations</div><div class="code-content"><div class="line" data-help-title="Création d’un fichier vide" data-help-role="La commande touch crée le fichier mon_fichier.txt dans le dossier personnel de prof1 s’il n’existe pas encore."><span class="line-no">1</span><span class="line-text">sudo touch /home/prof1/mon_fichier.txt</span></div><div class="line" data-help-title="Changement de propriétaire et de groupe" data-help-role="Cette ligne fait de prof1 le propriétaire du fichier et associe le groupe profs au fichier."><span class="line-no">2</span><span class="line-text">sudo chown prof1:profs /home/prof1/mon_fichier.txt</span></div><div class="line" data-help-title="Définition des permissions 740" data-help-role="Cette ligne donne tous les droits au propriétaire, la lecture seule au groupe, puis aucun droit aux autres utilisateurs."><span class="line-no">3</span><span class="line-text">sudo chmod 740 /home/prof1/mon_fichier.txt</span></div></div></div></section>
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Valeur</th><th>Droits</th></tr></thead><tbody><tr><td><strong>7</strong> pour le propriétaire</td><td>Lecture, écriture et exécution.</td></tr><tr><td><strong>4</strong> pour le groupe</td><td>Lecture seulement.</td></tr><tr><td><strong>0</strong> pour les autres</td><td>Aucun droit.</td></tr></tbody></table></div>
+        <p>Le propriétaire a donc le plus de droits. Le groupe associé au fichier a des droits plus limités, et les autres utilisateurs n’ont aucun accès.</p>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Vérifier qui peut accéder au fichier</h3>
+      <div class="section-body">
+        <section class="code-window ".strip()><div class="window-header"><div class="window-controls"><span></span><span></span><span></span></div><div class="window-title">verification-acces.sh</div></div><div class="code-body"><div class="terminal-intro">Terminal Linux — test d’accès</div><div class="code-content"><div class="line" data-help-title="Vérifier les groupes de eleve1" data-help-role="Cette commande confirme les groupes auxquels eleve1 appartient avant de tester l’accès au fichier."><span class="line-no">1</span><span class="line-text">groups eleve1</span></div><div class="line" data-help-title="Se placer sous eleve1" data-help-role="Cette ligne permet de tester le comportement du système du point de vue de l’utilisateur eleve1."><span class="line-no">2</span><span class="line-text">su eleve1</span></div><div class="line" data-help-title="Tentative de lecture du fichier" data-help-role="Cette ligne tente d’afficher le contenu du fichier de prof1. Avec les permissions 740, eleve1 ne devrait pas y avoir accès."><span class="line-no">3</span><span class="line-text">cat /home/prof1/mon_fichier.txt</span></div><div class="line" data-help-title="Se placer sous prof1" data-help-role="Cette ligne permet ensuite de tester l’accès en tant que propriétaire du fichier."><span class="line-no">4</span><span class="line-text">su prof1</span></div><div class="line" data-help-title="Lecture par le propriétaire" data-help-role="Cette ligne doit fonctionner pour prof1, car ce compte est propriétaire du fichier."><span class="line-no">5</span><span class="line-text">cat /home/prof1/mon_fichier.txt</span></div></div></div></section>
+        <div class="callout spaced-block final-callout"><strong>Ce qu’il faut comprendre :</strong> cet exemple montre concrètement que tous les utilisateurs n’ont pas les mêmes droits, que les groupes organisent les permissions et que les autorisations protègent les données.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-10">
+  <div class="part-header"><h2 class="part-title">Conseils utiles et erreurs fréquentes</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">Bons réflexes à adopter</h3>
+      <div class="section-body">
+        <ul>
+          <li>Toujours vérifier avec quel compte on est connecté avant d’exécuter une commande sensible.</li>
+          <li>Utiliser <strong>sudo</strong> avec précaution.</li>
+          <li>Vérifier les groupes d’un utilisateur après une modification.</li>
+          <li>Relire une commande avant de valider, surtout lorsqu’elle supprime quelque chose.</li>
+          <li>Bien distinguer utilisateur, groupe, propriétaire et permissions.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Erreurs fréquentes à éviter</h3>
+      <div class="section-body">
+        <div class="table-wrap spaced-block"><table><thead><tr><th>Erreur</th><th>Conséquence possible</th><th>Bon réflexe</th></tr></thead><tbody><tr><td>Confondre utilisateur et groupe</td><td>Mauvaise compréhension de l’organisation du système.</td><td>Toujours se demander : s’agit-il d’un compte individuel ou d’un ensemble de comptes ?</td></tr><tr><td>Oublier les privilèges administrateur</td><td>La commande échoue ou ne fait pas ce qu’on attend.</td><td>Vérifier si la commande exige <strong>sudo</strong>.</td></tr><tr><td>Utiliser <strong>usermod -G</strong> sans <strong>-a</strong></td><td>Les autres appartenances de groupe peuvent être remplacées.</td><td>Utiliser <strong>usermod -aG</strong> pour ajouter sans écraser.</td></tr><tr><td>Supprimer trop vite un utilisateur avec <strong>--remove-home</strong></td><td>Le dossier personnel et les fichiers sont supprimés.</td><td>Sauvegarder les fichiers utiles avant la suppression.</td></tr><tr><td>Donner trop de droits à un fichier</td><td>Le fichier devient accessible à trop de personnes.</td><td>Attribuer uniquement les droits réellement nécessaires.</td></tr></tbody></table></div>
+        <div class="callout spaced-block warning-callout"><strong>Erreur classique :</strong> retirer un utilisateur d’un groupe n’est pas la même opération que supprimer le groupe lui-même.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="part" id="partie-11">
+  <div class="part-header"><h2 class="part-title">À retenir, questions et petit exercice</h2></div>
+  <div class="part-body">
+    <section class="section-block line-section">
+      <h3 class="section-title">À retenir absolument</h3>
+      <div class="section-body">
+        <ul class="summary-list">
+          <li>Linux permet de gérer précisément les utilisateurs et les groupes.</li>
+          <li>Les utilisateurs servent à identifier les personnes qui utilisent le système.</li>
+          <li>Les groupes servent à organiser plusieurs utilisateurs et à simplifier la gestion des droits.</li>
+          <li>Le super utilisateur <strong>root</strong> possède des privilèges très élevés.</li>
+          <li><strong>sudo</strong> permet d’exécuter temporairement des commandes d’administration.</li>
+          <li><strong>adduser</strong> et <strong>deluser</strong> servent à gérer les utilisateurs.</li>
+          <li><strong>addgroup</strong> et <strong>delgroup</strong> servent à gérer les groupes.</li>
+          <li><strong>usermod -aG</strong> permet d’ajouter un utilisateur à un groupe.</li>
+          <li><strong>gpasswd -d</strong> permet de retirer un utilisateur d’un groupe.</li>
+          <li><strong>groups</strong> et <strong>getent group</strong> permettent de vérifier les informations.</li>
+          <li>Les permissions sur les fichiers protègent les ressources du système.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Questions de compréhension</h3>
+      <div class="section-body">
+        <ol>
+          <li>Quelle est la différence entre un utilisateur et un groupe ?</li>
+          <li>Pourquoi utilise-t-on des groupes sous Linux ?</li>
+          <li>Quel est le rôle du super utilisateur <strong>root</strong> ?</li>
+          <li>À quoi sert la commande <strong>sudo</strong> ?</li>
+          <li>Que signifie le symbole <strong>#</strong> dans l’invite de commande ?</li>
+          <li>Quelle commande permet d’ajouter un utilisateur ?</li>
+          <li>Quelle commande permet d’ajouter un utilisateur à un groupe ?</li>
+          <li>À quoi sert la commande <strong>cut -d: -f1 /etc/passwd</strong> ?</li>
+          <li>Pourquoi <strong>eleve1</strong> ne peut-il pas lire le fichier de <strong>prof1</strong> dans l’exemple ?</li>
+          <li>Pourquoi faut-il faire attention à la commande <strong>deluser --remove-home</strong> ?</li>
+        </ol>
+      </div>
+    </section>
+    <section class="section-block line-section">
+      <h3 class="section-title">Petit exercice guidé</h3>
+      <div class="section-body">
+        <p>On souhaite créer un utilisateur nommé <strong>stage1</strong> et un groupe nommé <strong>stagiaires</strong>.</p>
+        <ol>
+          <li>Écrire la commande pour créer le groupe.</li>
+          <li>Écrire la commande pour créer l’utilisateur.</li>
+          <li>Écrire la commande pour ajouter <strong>stage1</strong> au groupe <strong>stagiaires</strong>.</li>
+          <li>Écrire la commande qui permet de vérifier les groupes de <strong>stage1</strong>.</li>
+        </ol>
+        <section class="syntax-card"><h4>Aide-mémoire de départ</h4><pre data-help-title="Aide de démarrage" data-help-role="Ce bloc fournit les quatre commandes attendues pour le petit exercice final afin de permettre une relecture rapide après la résolution.">sudo addgroup stagiaires
+sudo adduser stage1
+sudo usermod -aG stagiaires stage1
+groups stage1</pre></section>
+        <div class="callout spaced-block final-callout"><strong>Conclusion :</strong> la gestion des utilisateurs et des groupes sous Linux est une compétence de base en administration système. Elle permet d’organiser les comptes, de sécuriser les ressources et de contrôler les accès de façon propre et professionnelle.</div>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+  
+<section class="card qcm-card" id="qcm-final">
+<h2>QCM final de validation</h2>
+<p class="qcm-access-note">Utilise la touche Tab pour parcourir les choix puis valide avec le bouton final.</p>
+<p class="qcm-intro">Réponds aux 10 questions ci-dessous, puis valide l’ensemble avec le bouton final. La réussite est obtenue à partir de <strong>6 bonnes réponses sur 10</strong>.</p>
+<div id="qcmFinal">
+<div class="qcm-form qcm-block">
+
+<article class="qcm-question" data-correct="b" data-hint="Relis la première partie sur la différence entre un utilisateur et un groupe.">
+<h3 class="qcm-question-title">Question 1 — Qu’est-ce qu’un groupe sous Linux ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q1-a"><input id="q1-a" name="q1" type="radio" value="a"/><span>Un mot de passe commun utilisé par plusieurs personnes.</span></label>
+<label class="qcm-option" for="q1-b"><input id="q1-b" name="q1" type="radio" value="b"/><span>Un ensemble d’utilisateurs réunis sous un même nom pour simplifier la gestion des droits.</span></label>
+<label class="qcm-option" for="q1-c"><input id="q1-c" name="q1" type="radio" value="c"/><span>Un fichier spécial qui remplace les comptes utilisateur.</span></label>
+<label class="qcm-option" for="q1-d"><input id="q1-d" name="q1" type="radio" value="d"/><span>Une interface graphique de configuration.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="c" data-hint="Revois les avantages liés à la sécurité et à l’organisation.">
+<h3 class="qcm-question-title">Question 2 — Pourquoi utilise-t-on des groupes sous Linux ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q2-a"><input id="q2-a" name="q2" type="radio" value="a"/><span>Uniquement pour changer la couleur du terminal.</span></label>
+<label class="qcm-option" for="q2-b"><input id="q2-b" name="q2" type="radio" value="b"/><span>Pour supprimer automatiquement les utilisateurs inutiles.</span></label>
+<label class="qcm-option" for="q2-c"><input id="q2-c" name="q2" type="radio" value="c"/><span>Pour organiser les comptes et attribuer plus facilement des autorisations.</span></label>
+<label class="qcm-option" for="q2-d"><input id="q2-d" name="q2" type="radio" value="d"/><span>Pour remplacer toutes les permissions sur les fichiers.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="a" data-hint="Relis la partie sur root et les privilèges élevés.">
+<h3 class="qcm-question-title">Question 3 — Quel est le rôle principal du compte root ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q3-a"><input id="q3-a" name="q3" type="radio" value="a"/><span>Exécuter des opérations d’administration avec les privilèges les plus élevés.</span></label>
+<label class="qcm-option" for="q3-b"><input id="q3-b" name="q3" type="radio" value="b"/><span>Stocker tous les fichiers personnels des utilisateurs.</span></label>
+<label class="qcm-option" for="q3-c"><input id="q3-c" name="q3" type="radio" value="c"/><span>Remplacer la commande sudo dans tous les cas.</span></label>
+<label class="qcm-option" for="q3-d"><input id="q3-d" name="q3" type="radio" value="d"/><span>Créer uniquement des groupes et jamais des utilisateurs.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="d" data-hint="Reprends l’explication des symboles dans l’invite de commande.">
+<h3 class="qcm-question-title">Question 4 — Que signifie généralement le symbole <strong>#</strong> dans l’invite de commande ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q4-a"><input id="q4-a" name="q4" type="radio" value="a"/><span>Le compte est bloqué.</span></label>
+<label class="qcm-option" for="q4-b"><input id="q4-b" name="q4" type="radio" value="b"/><span>Le fichier courant est protégé.</span></label>
+<label class="qcm-option" for="q4-c"><input id="q4-c" name="q4" type="radio" value="c"/><span>La commande va forcément échouer.</span></label>
+<label class="qcm-option" for="q4-d"><input id="q4-d" name="q4" type="radio" value="d"/><span>On travaille avec des privilèges d’administration plus élevés.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="b" data-hint="Relis la partie sur la création d’un utilisateur.">
+<h3 class="qcm-question-title">Question 5 — Quelle commande permet de créer un utilisateur nommé john ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q5-a"><input id="q5-a" name="q5" type="radio" value="a"/><span>sudo addgroup john</span></label>
+<label class="qcm-option" for="q5-b"><input id="q5-b" name="q5" type="radio" value="b"/><span>sudo adduser john</span></label>
+<label class="qcm-option" for="q5-c"><input id="q5-c" name="q5" type="radio" value="c"/><span>sudo groups john</span></label>
+<label class="qcm-option" for="q5-d"><input id="q5-d" name="q5" type="radio" value="d"/><span>sudo gpasswd -d john</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="c" data-hint="Revois l’explication de l’option --remove-home.">
+<h3 class="qcm-question-title">Question 6 — Que fait l’option <strong>--remove-home</strong> avec <strong>deluser</strong> ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q6-a"><input id="q6-a" name="q6" type="radio" value="a"/><span>Elle change le mot de passe de l’utilisateur avant la suppression.</span></label>
+<label class="qcm-option" for="q6-b"><input id="q6-b" name="q6" type="radio" value="b"/><span>Elle retire seulement l’utilisateur de tous ses groupes.</span></label>
+<label class="qcm-option" for="q6-c"><input id="q6-c" name="q6" type="radio" value="c"/><span>Elle supprime aussi le répertoire personnel et donc les fichiers de l’utilisateur.</span></label>
+<label class="qcm-option" for="q6-d"><input id="q6-d" name="q6" type="radio" value="d"/><span>Elle transforme l’utilisateur en compte administrateur.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="a" data-hint="Relis l’explication détaillée de usermod -aG.">
+<h3 class="qcm-question-title">Question 7 — Pourquoi l’option <strong>-a</strong> est-elle importante dans <strong>usermod -aG</strong> ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q7-a"><input id="q7-a" name="q7" type="radio" value="a"/><span>Parce qu’elle ajoute un groupe sans écraser les autres appartenances.</span></label>
+<label class="qcm-option" for="q7-b"><input id="q7-b" name="q7" type="radio" value="b"/><span>Parce qu’elle active automatiquement root.</span></label>
+<label class="qcm-option" for="q7-c"><input id="q7-c" name="q7" type="radio" value="c"/><span>Parce qu’elle supprime les groupes inutiles.</span></label>
+<label class="qcm-option" for="q7-d"><input id="q7-d" name="q7" type="radio" value="d"/><span>Parce qu’elle oblige Linux à redémarrer.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="d" data-hint="Revois les commandes de vérification des groupes.">
+<h3 class="qcm-question-title">Question 8 — Quelle commande permet de voir à quels groupes appartient l’utilisateur john ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q8-a"><input id="q8-a" name="q8" type="radio" value="a"/><span>adduser john</span></label>
+<label class="qcm-option" for="q8-b"><input id="q8-b" name="q8" type="radio" value="b"/><span>delgroup john</span></label>
+<label class="qcm-option" for="q8-c"><input id="q8-c" name="q8" type="radio" value="c"/><span>cut -d: -f1 /etc/passwd</span></label>
+<label class="qcm-option" for="q8-d"><input id="q8-d" name="q8" type="radio" value="d"/><span>groups john</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="b" data-hint="Relis la partie sur /etc/passwd et la commande cut.">
+<h3 class="qcm-question-title">Question 9 — Que renvoie généralement la commande <strong>cut -d: -f1 /etc/passwd</strong> ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q9-a"><input id="q9-a" name="q9" type="radio" value="a"/><span>Les mots de passe des utilisateurs.</span></label>
+<label class="qcm-option" for="q9-b"><input id="q9-b" name="q9" type="radio" value="b"/><span>La liste des noms d’utilisateurs, c’est-à-dire le premier champ de chaque ligne.</span></label>
+<label class="qcm-option" for="q9-c"><input id="q9-c" name="q9" type="radio" value="c"/><span>Les groupes secondaires de tous les comptes.</span></label>
+<label class="qcm-option" for="q9-d"><input id="q9-d" name="q9" type="radio" value="d"/><span>Les permissions numériques de tous les fichiers système.</span></label>
+</div>
+</article>
+
+<article class="qcm-question" data-correct="c" data-hint="Relis l’exemple complet avec chmod 740.">
+<h3 class="qcm-question-title">Question 10 — Dans la permission <strong>740</strong>, quel droit reçoit le groupe ?</h3>
+<div class="qcm-options">
+<label class="qcm-option" for="q10-a"><input id="q10-a" name="q10" type="radio" value="a"/><span>Lecture, écriture et exécution.</span></label>
+<label class="qcm-option" for="q10-b"><input id="q10-b" name="q10" type="radio" value="b"/><span>Aucun droit.</span></label>
+<label class="qcm-option" for="q10-c"><input id="q10-c" name="q10" type="radio" value="c"/><span>Lecture seulement.</span></label>
+<label class="qcm-option" for="q10-d"><input id="q10-d" name="q10" type="radio" value="d"/><span>Écriture seulement.</span></label>
+</div>
+</article>
+
+</div>
+<div class="qcm-actions">
+<button class="qcm-submit" type="button">Valider le QCM</button>
+</div>
+</div>
+</section>
+
+<div aria-hidden="true" class="qcm-overlay" id="qcmOverlay">
+  <div aria-labelledby="qcmModalTitle" aria-modal="true" class="qcm-modal failure" role="dialog">
+    <div class="qcm-modal-label">Validation à reprendre</div>
+    <h3 class="qcm-modal-title" id="qcmModalTitle">Résultat du QCM</h3>
+    <p class="qcm-modal-text">Le message de résultat apparaîtra ici.</p>
+    <div class="qcm-modal-hints" hidden="">
+      <h4 class="qcm-modal-hints-title">Pistes de relecture</h4>
+      <ul class="qcm-hints"></ul>
+    </div>
+    <div class="qcm-modal-actions">
+      <button class="qcm-retry" type="button">Reprendre</button>
+      <button class="qcm-close" type="button">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+  <footer class="course-footer">
+    <div class="course-footer-left">Auteur : © <a class="footer-author-link" href="droits.html">Anis Ghaieb</a> — Tous droits réservés</div>
+    <div class="course-footer-right">2026</div>
+  </footer>
+</main>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
